@@ -11,13 +11,12 @@ officeRows = [[101, 'San Marino'],
     [107, 'San Mateo']]
 
 agentColumns = ['id', 'name', 'contact']
-agentRows = [[201, 'Mark Zucks', 'mark@fakebook1.com'],[202, 'Steve Robs', 'steve@pineapple1.com'],[203, 'Bill Waits', 'bill@macrohard1.com'],[204, 'Jeff Amazin', 'jeff@painforest.com'],[205, 'Jack Dowry', 'jack@titter.com'],
+agentRows = [[201, 'Mark Zucks', 'mark@fakebook1.com'],[202, 'Steve Robs', 'steve@pineapple1.com'],[203, 'Bill Waits', 'bill@macrohard1.com'],[204, 'Jeff Amazin', 'jeff@painforest.com'],[205, 'Jack Dowry', 'jack@teeter.com'],
 [206, 'Banye East', 'clb@pottyfi.com'],[207, 'Joe Brandon', 'lgb@123fjb.com'],[208, 'Doland Troomp', 'troomp@8tower.com']]
 
-# creating the data for the sellers
 sellerColumns = ['id','name','contact']
-sellerRows = [[301, 'Arnold', 'arnold@somemail.com'],
-    [302, 'Bruce', 'bruce@somemail.com'],
+sellerRows = [[301,'Arnold','arnold@somemail.com'],
+    [302,'Bruce','bruce@somemail.com'],
     [303, 'Ryan', 'ryan@somemail.com'],
     [304, 'Adam', 'adam@somemail.com'],
     [305, 'Richard', 'richard@somemail.com'],
@@ -30,9 +29,8 @@ sellerRows = [[301, 'Arnold', 'arnold@somemail.com'],
     [312, 'Olu', 'olu@somemail.com'],
     [313, 'Chamath', 'chamath@somemail.com']]
 
-# creating the data for the buyers
 buyerColumns = ['id','name','contact']
-buyerRows = [[401,'Ronald', 'ron@somemail.com'],
+buyerRows = [[401,'Ronald','ron@somemail.com'],
     [402, 'Nixon', 'nix@somemail.com'],
     [403, 'Harvey', 'harv@somemail.com'],
     [404, 'Smith', 'smit@somemail.com'],
@@ -70,16 +68,16 @@ columns = [officeColumns, houseColumns, agentColumns, sellerColumns, buyerColumn
 rows = [officeRows, houseRows, agentRows, sellerRows, buyerRows]
 tables = [Offices, Houses, Agents, Sellers, Buyers]
 
-def add_entries(tables, columns, rows):
+def createDB(tables, columns, rows):
     for value in rows:
         item_dict = dict(zip(columns, value))
         entry = tables(**item_dict)
         session.add(entry)
 
-for i in range(len(tables)): add_entries(tables[i], columns[i], rows[i])
+for i in range(len(tables)): createDB(tables[i], columns[i], rows[i])
 session.commit()
 
-def transaction(house_id,buyer_id,sale_price,sale_date):
+def dotransaction(house_id,buyer_id,sale_price,sale_date):
     agent_id = session.query(Houses.listingAgentID).filter(Houses.id == house_id).first()[0]
     comps = [(sale_price < 100000, 0.01), (sale_price < 200000, 0.075),(sale_price < 500000, 0.06),(sale_price < 1000000, 0.05),(sale_price >= 1000000, 0.04)] #commision
     
@@ -93,7 +91,7 @@ def transaction(house_id,buyer_id,sale_price,sale_date):
     sold.update({Houses.sold: True}) #mark as sold
     session.commit()
 
-sold_houses = [
+transactions = [
     [501, 403, 2800000, datetime.date(2022, 4, 28)],
     [509, 407, 4800000, datetime.date(2022, 4, 23)],
     [505, 401, 300000, datetime.date(2022, 4, 25)],
@@ -107,5 +105,5 @@ sold_houses = [
     [503, 409, 88000, datetime.date(2022, 4, 27)],
     [504, 404, 550000, datetime.date(2022, 4, 22)]]
 
-for value in sold_houses: transaction(*value)
+for transaction in transactions: dotransaction(*transaction)
 session.close()
