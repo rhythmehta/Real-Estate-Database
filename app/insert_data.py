@@ -1,5 +1,5 @@
 # insert_data.py
-from .models import *
+from app.create import *
 
 officeColumns = ['id', 'area']
 officeRows = [[101, 'San Marino'],
